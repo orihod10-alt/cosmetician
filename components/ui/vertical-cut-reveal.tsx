@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useRef, type ElementType } from "react";
+import React, { useRef, type ElementType } from "react";
 
 type SpringConfig = {
   type?: "spring";
@@ -65,11 +65,11 @@ export function VerticalCutReveal({
   };
 
   if (reduced) {
-    const StaticEl = Tag as keyof JSX.IntrinsicElements;
+    const StaticEl = Tag as React.ElementType;
     return <StaticEl className={containerClassName}>{children}</StaticEl>;
   }
 
-  const ContainerEl = Tag as keyof JSX.IntrinsicElements;
+  const ContainerEl = Tag as React.ElementType;
 
   return (
     <ContainerEl

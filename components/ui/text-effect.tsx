@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion, type TargetAndTransition } from "framer-motion";
 import { useRef } from "react";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -9,7 +9,7 @@ type Preset = "blur" | "slide" | "fade";
 
 const PRESETS: Record<
   Preset,
-  { initial: Record<string, unknown>; animate: Record<string, unknown>; duration: number }
+  { initial: TargetAndTransition; animate: TargetAndTransition; duration: number }
 > = {
   blur: {
     initial: { opacity: 0, filter: "blur(8px)" },
