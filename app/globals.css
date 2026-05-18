@@ -1,0 +1,344 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: var(--font-frank), "Frank Ruhl Libre", serif;
+  --font-body: var(--font-heebo), "Heebo", sans-serif;
+
+  --color-bg-base: oklch(96.5% 0.008 65);
+  --color-bg-surface: oklch(98.5% 0.005 65);
+  --color-text-primary: oklch(16% 0.008 50);
+  --color-text-secondary: oklch(46% 0.01 50);
+  --color-text-tertiary: oklch(64% 0.008 50);
+  --color-accent: oklch(64% 0.07 8);
+  --color-accent-hover: oklch(57% 0.07 8);
+  --color-accent-subtle: oklch(93% 0.018 8);
+  --color-border: oklch(88% 0.012 65);
+  --color-dark: oklch(18% 0.01 65);
+}
+
+section[data-hero] {
+  background-color: oklch(8% 0.008 65);
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background-color: oklch(93% 0.018 8);
+    color: oklch(16% 0.008 50);
+  }
+
+  /* ─── Keyframes — gated so they simply don't exist when motion is reduced ─── */
+  @media (prefers-reduced-motion: no-preference) {
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes nav-from-start {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes nav-from-end {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes hero-label-down {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes hero-image-enter {
+      from { opacity: 0; transform: scale(1.08); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* Floating large numerals in HowItWorks */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    /* Aurora background drift */
+    @keyframes aurora {
+      from { background-position: 50% 50%; }
+      to   { background-position: 350% 50%; }
+    }
+
+    /* Marquee scroll */
+    @keyframes marquee-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* WhatsApp FAB pulse ring */
+    @keyframes wa-pulse {
+      from { transform: scale(1);   opacity: 0.45; }
+      to   { transform: scale(1.55); opacity: 0; }
+    }
+  }
+
+  /* ─── Scroll reveal ─── */
+  .reveal-item {
+    /* Default (reduced-motion): fully visible */
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-item {
+      opacity: 0;
+      transform: perspective(1200px) translateY(32px) rotateX(6deg);
+      transition:
+        opacity  0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+    }
+    .reveal-container[data-visible="true"] .reveal-item {
+      opacity: 1;
+      transform: perspective(1200px) translateY(0) rotateX(0deg);
+    }
+  }
+
+  /* ─── Services stagger ─── */
+  .service-stagger {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .service-stagger {
+      opacity: 0;
+      transform: translateX(20px); /* RTL: enter from inline-start (physical right) */
+      transition:
+        opacity  0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--stagger-index, 0) * 80ms),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--stagger-index, 0) * 80ms);
+    }
+    .stagger-container[data-visible="true"] .service-stagger {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* ─── Service row hover ─── */
+  .service-row {
+    position: relative;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .service-row::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: oklch(64% 0.07 8);
+    transform: scaleX(0);
+    transform-origin: 100% center; /* grow from physical right = RTL inline-start */
+    transition: transform 0.4s ease-out;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .service-row:hover {
+      transform: translateX(4px); /* RTL: lean toward inline-start (physical right) */
+    }
+    .service-row:hover::after {
+      transform: scaleX(1);
+    }
+    .service-row:not(:hover)::after {
+      transform-origin: 0% center;
+      transition: transform 0.3s ease-in;
+    }
+  }
+
+  /* ─── Floating numbers ─── */
+  @media (prefers-reduced-motion: no-preference) {
+    .float-number {
+      animation: float 5s ease-in-out var(--float-delay, 0s) infinite;
+    }
+  }
+
+  /* ─── WhatsApp FAB ─── */
+  .wa-fab-wrapper {
+    position: fixed;
+    inset-inline-end: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 40;
+    opacity: 0;
+    transform: translateY(80px);
+    transition:
+      opacity  0.8s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .wa-fab-wrapper.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wa-fab-wrapper { opacity: 1; transform: none; transition: none; }
+  }
+  .wa-fab-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background-color: oklch(52% 0.16 148); /* match the WhatsApp green button */
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .wa-fab-pulse {
+      animation: wa-pulse 2.5s ease-out infinite;
+    }
+  }
+  .wa-fab-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 9999px;
+    background-color: oklch(52% 0.16 148); /* WhatsApp green */
+    color: oklch(98% 0.005 65);
+    transition: transform 0.3s ease-out;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .wa-fab-button:hover {
+      transform: scale(1.1) rotate(6deg);
+    }
+  }
+  .wa-fab-button:active {
+    transform: scale(0.94);
+  }
+}
+
+/* ─── Liquid Glass ─── */
+.liquid-glass {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.15);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.4) 0%,
+    rgba(255,255,255,0.1) 20%,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0) 60%,
+    rgba(255,255,255,0.1) 80%,
+    rgba(255,255,255,0.4) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.liquid-glass-strong {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass-strong::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.5) 0%,
+    rgba(255,255,255,0.2) 20%,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0) 60%,
+    rgba(255,255,255,0.2) 80%,
+    rgba(255,255,255,0.5) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ─── Utilities ─── */
+@utility text-fluid-hero {
+  font-size: clamp(2.5rem, 6vw, 5.25rem);
+  line-height: 1.1;
+}
+@utility text-fluid-section {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.15;
+}
+@utility animate-fade-up {
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both;
+}
+@utility animate-fade-in {
+  animation: fade-in 0.8s ease var(--delay, 0s) both;
+}
+@utility animate-nav-from-start {
+  animation: nav-from-start 0.8s ease-out 0ms both;
+}
+@utility animate-nav-from-end {
+  animation: nav-from-end 0.8s ease-out 0ms both;
+}
+@utility animate-hero-label {
+  animation: hero-label-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both;
+}
+@utility animate-hero-image {
+  animation: hero-image-enter 1.2s ease-out var(--delay, 0s) both;
+}
+@utility animate-marquee {
+  animation: marquee-scroll 50s linear infinite;
+}
+@utility animate-aurora {
+  animation: aurora 60s linear infinite;
+}
+
+@layer components {
+  .footer-link {
+    color: oklch(52% 0.008 45);
+    transition: color 0.2s ease;
+  }
+  .footer-link:hover {
+    color: oklch(88% 0.005 65);
+  }
+
+  .footer-social {
+    color: oklch(40% 0.008 42);
+    transition: color 0.2s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .footer-social:hover { color: oklch(62% 0.008 42); }
+  }
+
+  .footer-cta-link {
+    display: inline-block;
+    color: oklch(55% 0.008 45);
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .footer-cta-link:hover {
+      color: oklch(88% 0.005 65);
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Press-down feedback for CTA buttons — replaces transition-colors duration-300 */
+  .cta-btn {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: 300ms, 300ms, 300ms, 160ms;
+    transition-timing-function: ease, ease, ease, cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .cta-btn:active {
+    transform: scale(0.97);
+  }
+}
