@@ -1,6 +1,9 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
+
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 interface SocialLink {
   icon: React.ReactNode;
@@ -27,7 +30,15 @@ export function Footer({ brandName, brandDescription, socialLinks, navLinks }: F
       className="relative overflow-hidden"
       style={{ backgroundColor: "oklch(35% 0.025 65)", borderTop: "1px solid rgba(255,255,255,0.08)" }}
     >
-      {/* Animated watermark */}
+      <style>{`
+        @keyframes watermark-drift {
+          0%   { transform: translateX(0); }
+          50%  { transform: translateX(-4%); }
+          100% { transform: translateX(0); }
+        }
+      `}</style>
+
+      {/* Drifting watermark */}
       <div
         aria-hidden
         className="pointer-events-none select-none absolute inset-0 flex items-center justify-center overflow-hidden"
@@ -42,22 +53,21 @@ export function Footer({ brandName, brandDescription, socialLinks, navLinks }: F
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
-            animation: "watermark-breathe 6s ease-in-out infinite",
+            animation: "watermark-drift 26s ease-in-out infinite",
           }}
         >
           {brandName}
         </span>
       </div>
 
-      <style>{`
-        @keyframes watermark-breathe {
-          0%, 100% { opacity: 0.7; }
-          50% { opacity: 1; }
-        }
-      `}</style>
-
-      <div className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-14 pt-20 md:pt-28 pb-10 md:pb-14">
-
+      {/* Main content — entrance animation */}
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: EASE }}
+        viewport={{ once: true, margin: "-80px" }}
+        className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-14 pt-20 md:pt-28 pb-10 md:pb-14"
+      >
         {/* Logo + brand + social row */}
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 mb-16">
 
@@ -77,32 +87,39 @@ export function Footer({ brandName, brandDescription, socialLinks, navLinks }: F
             </div>
           </div>
 
-          {/* Social links */}
+          {/* Social links — spring scale on hover */}
           <div className="flex items-center gap-5">
             {socialLinks.map((link) => (
-              <a
+              <motion.a
                 key={link.label}
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label}
-                className="text-white/60 transition-colors duration-300 hover:text-white"
+                className="text-white/60 hover:text-white"
+                whileHover={{ scale: 1.18 }}
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: "spring", stiffness: 420, damping: 22 }}
               >
                 {link.icon}
-              </a>
+              </motion.a>
             ))}
           </div>
         </div>
 
-        {/* Nav links */}
+        {/* Nav links — underline slide-in on hover */}
         <nav className="flex flex-wrap gap-x-8 gap-y-3 mb-14">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="font-body font-light text-sm text-white/60 transition-colors duration-300 hover:text-white"
+              className="relative group font-body font-light text-sm text-white/60 hover:text-white transition-colors duration-300 pb-0.5"
             >
               {link.label}
+              <span
+                className="absolute bottom-0 right-0 h-px w-0 group-hover:w-full transition-all duration-300 ease-out"
+                style={{ backgroundColor: "rgba(255,255,255,0.35)" }}
+              />
             </a>
           ))}
         </nav>
@@ -115,14 +132,20 @@ export function Footer({ brandName, brandDescription, socialLinks, navLinks }: F
           }}
         />
 
-        {/* Bottom bar */}
-        <div className="flex items-center justify-between">
+        {/* Copyright — delayed fade */}
+        <motion.div
+          className="flex items-center justify-between"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.45, ease: "easeOut" }}
+          viewport={{ once: true }}
+        >
           <p className="font-body font-light text-white/40 text-xs">
             © {new Date().getFullYear()} {brandName}. כל הזכויות שמורות.
           </p>
-        </div>
+        </motion.div>
 
-      </div>
+      </motion.div>
     </footer>
   );
 }

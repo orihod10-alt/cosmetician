@@ -136,7 +136,7 @@ export default function Testimonials() {
 
       {/* Scrolling columns */}
       <div
-        className="flex justify-center gap-6 mt-10 overflow-hidden max-w-5xl mx-auto px-8 md:px-16"
+        className="flex justify-center gap-3 md:gap-6 mt-10 overflow-hidden max-w-5xl mx-auto px-3 md:px-16"
         style={{
           maxHeight: "780px",
           WebkitMaskImage:
@@ -147,7 +147,9 @@ export default function Testimonials() {
       >
         <TestimonialsColumn testimonials={firstColumn} duration={18} />
         <TestimonialsColumn testimonials={secondColumn} duration={22} />
-        <TestimonialsColumn testimonials={thirdColumn} duration={16} />
+        <div className="hidden md:contents">
+          <TestimonialsColumn testimonials={thirdColumn} duration={16} />
+        </div>
       </div>
 
       {/* Bottom fade to next section */}

@@ -14,10 +14,12 @@ export type Testimonial = {
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <div
-      className="bg-white rounded-2xl p-8 w-full"
+      className="bg-white rounded-2xl p-4 md:p-8 w-full"
       style={{
         border: "1px solid oklch(15% 0.012 65 / 0.08)",
         boxShadow: "0 2px 20px rgba(0,0,0,0.04)",
+        overflowWrap: "break-word",
+        wordBreak: "break-word",
       }}
     >
       <div
